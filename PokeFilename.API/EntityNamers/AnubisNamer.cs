@@ -18,7 +18,7 @@ namespace PokeFilename.API
             string shinytype = string.Empty;
             if (pk.IsShiny)
             {
-                if (pk.Format >= 8 && (((PK8)pk).ShinyXor == 0 || ((PK8)pk).FatefulEncounter || pk.Version == (int)GameVersion.GO))
+                if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO))
                     shinytype = " ■";
                 else
                     shinytype = " ★";
@@ -30,7 +30,7 @@ namespace PokeFilename.API
             string ballFormatted = GameInfo.Strings.balllist[pk.Ball].Split(' ')[0];
 
             string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, 8);
-            if (pk.Format >= 8 && ((PK8)pk).CanGigantamax)
+            if (pk is IGigantamax gmax && gmax.CanGigantamax)
                 speciesName += "-Gmax";
 
             string OTInfo = string.IsNullOrEmpty(pk.OT_Name) ? "" : $" - {pk.OT_Name} - {TIDFormatted} - {ballFormatted}";

@@ -43,7 +43,7 @@ namespace PokeFilename
 
         private void AddPluginControl(ToolStripDropDownItem tools)
         {
-            var ctrl = new ToolStripMenuItem(Name);
+            var ctrl = new ToolStripMenuItem(Name) { Image = GUI.Resources.pokeball };
             ctrl.Click += OpenSettings;
             ctrl.Name = "Menu_PokeFilenameSettings";
             tools.DropDownItems.Add(ctrl);
