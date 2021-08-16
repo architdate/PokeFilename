@@ -44,7 +44,7 @@ namespace PokeFilename.API
             string star = gb.IsShiny ? " ★" : string.Empty;
 
             string IVList = gb.IV_HP + "." + gb.IV_ATK + "." + gb.IV_DEF + "." + gb.IV_SPA + "." + gb.IV_SPD + "." + gb.IV_SPE;
-            string speciesName = SpeciesName.GetSpeciesNameGeneration(gb.Species, (int)LanguageID.English, 8);
+            string speciesName = SpeciesName.GetSpeciesNameGeneration(gb.Species, (int)LanguageID.English, gb.Format);
             string OTInfo = string.IsNullOrEmpty(gb.OT_Name) ? "" : $" - {gb.OT_Name} - {gb.TID:00000}";
 
             var raw = gb switch

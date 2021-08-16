@@ -1,0 +1,62 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+    - master
+    
+    pool:
+      vmImage: 'windows-latest'
+    
+    variables:
+      solution: '**/*.sln'
+      buildPlatform: 'Any CPU'
+      buildConfiguration: 'Release'
+    
+    steps:
+    - task: NuGetToolInstaller@1
+    
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+    
+    - powershell: |
+        git clone -q --depth=5 --branch=master https://github.com/kwsch/PKHeX.git $(Build.SourcesDirectory)/PKHeX
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(Build.SourcesDirectory)/PKHeX/PKHeX.sln'
+    
+    - task: VSBuild@1
+      inputs:
+        solution: '$(Build.SourcesDirectory)/PKHeX/PKHeX.sln'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+        createLogFile: true
+    
+    - powershell: |
+        $nugetver = (Get-ChildItem "$(UserProfile)/.nuget/packages/pkhex.core" | Sort-Object -Property LastWriteTime -Descending)[0].Name
+        Copy-Item "$(Build.SourcesDirectory)\pkhex\PKHeX.Core\bin\Release\net46\PKHeX.Core.dll" "$(UserProfile)\.nuget\packages\pkhex.core\$nugetver\lib\net46"
+        Copy-Item "$(Build.SourcesDirectory)\pkhex\PKHeX.Core\bin\Release\netstandard2.0\PKHeX.Core.dll" "$(UserProfile)\.nuget\packages\pkhex.core\$nugetver\lib\netstandard2.0"
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+        createLogFile: true
+    
+    - task: CmdLine@2
+      inputs:
+        script: |
+          mkdir bin
+          nuget install ILMerge -ExcludeVersion
+          cd ILMerge\tools\net452
+          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\PokeFilename.GUI.dll .\
+          xcopy ..\..\..\PokeFilename.API\bin\Release\net46\PokeFilename.API.dll .\
+          ilmerge /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6" /out:$(Agent.BuildDirectory)\s\bin\PokeFilename.dll PokeFilename.GUI.dll PokeFilename.API.dll
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Agent.BuildDirectory)\s\bin'
+        ArtifactName: 'PokeFilename'
+        publishLocation: 'Container'
