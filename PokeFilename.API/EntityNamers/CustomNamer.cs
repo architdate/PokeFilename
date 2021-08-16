@@ -46,6 +46,6 @@ namespace PokeFilename.API
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
-        private static string GetShinySymbol(PKM pk) => pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
+        private static string GetShinySymbol(PKM pk) => (pk is PB7 || pk.Format >= 8) && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
     }
 }
