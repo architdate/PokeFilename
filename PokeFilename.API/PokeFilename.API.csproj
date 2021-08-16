@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <OutputType>Library</OutputType>
+    <LangVersion>8</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PKHeX.Core" Version="21.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\PokeFilename.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PokeFilename.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\PokeFilename.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PokeFilename.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
