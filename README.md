@@ -2,7 +2,7 @@
 PKHeX-Plugin to customize the PKM output filename
 
 # About  
-This project uses `PKHeX.Core` and PKHeX's `IPlugin` interface to customize the file name of exported PKM files. Please refer to the [Wiki](https://github.com/architdate/PKHeX-Plugins/wiki) for more information regarding the functionalities provided by this project.
+This project uses `PKHeX.Core` and PKHeX's `IPlugin` interface to customize the file name of exported PKM files. Please refer to the [Wiki](https://github.com/architdate/PokeFilename/wiki) for more information regarding the functionalities provided by this project.
 
 This project is owned by [@architdate](https://github.com/architdate) (Discord: thecommondude#8240)
 
