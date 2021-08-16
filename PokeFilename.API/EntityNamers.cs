@@ -5,7 +5,8 @@ namespace PokeFilename.API
     [Serializable]
     public enum EntityNamers
     {
-        AnubisNamer,
-        CustomNamer,
+        Default = 0,
+        AnubisNamer = 1,
+        CustomNamer = 2,
     }
 }

@@ -10,35 +10,45 @@ namespace PokeFilename.API
                 return GetGBPKM(gb);
             return GetRegular(obj);
         }
-        
-        private string GetRegular(PKM pk)
+
+        private static string GetRegular(PKM pk)
         {
             string form = pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
+            string shinytype = GetShinyTypeString(pk);
 
-            string shinytype = string.Empty;
-            if (pk.IsShiny)
-            {
-                if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO))
-                    shinytype = " ■";
-                else
-                    shinytype = " ★";
-            }
-
-            string IVList = pk.IV_HP + "." + pk.IV_ATK + "." + pk.IV_DEF + "." + pk.IV_SPA + "." + pk.IV_SPD + "." + pk.IV_SPE;
+            string IVList = $"{pk.IV_HP}.{pk.IV_ATK}.{pk.IV_DEF}.{pk.IV_SPA}.{pk.IV_SPD}.{pk.IV_SPE}";
 
             string TIDFormatted = pk.Generation >= 7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
             string ballFormatted = GameInfo.Strings.balllist[pk.Ball].Split(' ')[0];
 
             string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, pk.Format);
-            if (pk is IGigantamax gmax && gmax.CanGigantamax)
+            if (pk is IGigantamax { CanGigantamax: true })
                 speciesName += "-Gmax";
 
             string OTInfo = string.IsNullOrEmpty(pk.OT_Name) ? "" : $" - {pk.OT_Name} - {TIDFormatted} - {ballFormatted}";
 
-            return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {Util.GetNaturesList("en")[pk.Nature]} - {IVList}{OTInfo} - {pk.Checksum:X4}{pk.EncryptionConstant:X8}";
+            return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {pk.Checksum:X4}{pk.EncryptionConstant:X8}";
         }
 
-        private string GetGBPKM(GBPKM gb)
+        private static string GetNature(INature pk)
+        {
+            var nature = pk.Nature;
+            var strings = Util.GetNaturesList("en");
+            if ((uint) nature >= strings.Length)
+                nature = 0;
+            return strings[nature];
+        }
+
+        private static string GetShinyTypeString(PKM pk)
+        {
+            if (!pk.IsShiny)
+                return string.Empty;
+            if ((pk is PB7 || pk.Format >= 8) && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
+                return " ■";
+            return " ★";
+        }
+
+        private static string GetGBPKM(GBPKM gb)
         {
             string form = gb.Form > 0 ? $"-{gb.Form:00}" : string.Empty;
             string star = gb.IsShiny ? " ★" : string.Empty;

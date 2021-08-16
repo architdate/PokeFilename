@@ -5,55 +5,42 @@ namespace PokeFilename.API
 {
     public sealed class CustomNamer : IFileNamer<PKM>
     {
-        public static string Regular = Properties.PokeFilename.Default.RegularFormat;
-        public static string Gameboy = Properties.PokeFilename.Default.GameboyFormat;
+        public readonly string Regular;
+        public readonly string Gameboy;
+
+        public CustomNamer(string regular, string gameboy)
+        {
+            Regular = regular;
+            Gameboy = gameboy;
+        }
+
         public string GetName(PKM obj)
         {
-            if (obj is GBPKM gb)
-                return GetGBPKM(gb);
-            return GetRegular(obj);
+            string pattern = obj is GBPKM ? Gameboy : Regular;
+            return RemapKeywords(obj, pattern);
         }
 
-        private string GetRegular(PKM obj)
-        {
-            var finstr = Regex.Replace(Regular, @"{(?<exp>[^}]+)}", match =>
-                {
-                    var p = match.Groups["exp"].Value;
-                    var check = obj.GetPropertyValue(p, out string? v);
-                    if (check) return v;
-                    return CustomExtensions.GetValue(obj, p);
-                }
-            );
-            return finstr;
-        }
+        private static string RemapKeywords(PKM pk, string input) => Regex.Replace(input, "{(?<exp>[^}]+)}", match => GetStringValue(pk, match.Groups["exp"].Value));
 
-        private string GetGBPKM(GBPKM gb)
+        private static string GetStringValue(PKM pk, string property)
         {
-            var finstr = Regex.Replace(Gameboy, @"{(?<exp>[^}]+)}", match =>
-                {
-                    var p = match.Groups["exp"].Value;
-                    var check = gb.GetPropertyValue(p, out string? v);
-                    if (check) return v;
-                    return CustomExtensions.GetValue(gb, p);
-                }
-            );
-            return finstr;
+            var check = pk.GetPropertyValue(property, out string? text);
+            if (check)
+                return text!; // use ! because the above method has no annotations for NotNullWhen
+            return pk.GetValue(property);
         }
     }
 
-    public static class CustomExtensions
+    public static class KeywordRemappingExtensions
     {
-        public static string GetValue(PKM pk, string prop)
+        public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            return prop switch
-            {
-                "ShinySymbol" => GetShinySymbol(pk),
-                "CharacteristicText" => GetCharacteristicText(pk),
-                "ConditionalForm" => GetConditionalForm(pk),
-                "Legality" => GetLegalityStatus(pk),
-                _ => "{" + prop + "}"
-            };
-        }
+            "ShinySymbol"        => GetShinySymbol(pk),
+            "CharacteristicText" => GetCharacteristicText(pk),
+            "ConditionalForm"    => GetConditionalForm(pk),
+            "Legality"           => GetLegalityStatus(pk),
+            _                    => $"{{{prop}}}"
+        };
 
         // Extensions
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";

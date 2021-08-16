@@ -2,23 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <OutputType>Library</OutputType>
-    <LangVersion>8</LangVersion>
+    <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PKHeX.Core" Version="21.8.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
     <ProjectReference Include="..\PokeFilename.API\PokeFilename.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="GUI\SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
