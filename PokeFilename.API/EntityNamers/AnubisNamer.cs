@@ -29,7 +29,7 @@ namespace PokeFilename.API
             string TIDFormatted = pk.Generation >= 7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
             string ballFormatted = GameInfo.Strings.balllist[pk.Ball].Split(' ')[0];
 
-            string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, 8);
+            string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, pk.Format);
             if (pk is IGigantamax gmax && gmax.CanGigantamax)
                 speciesName += "-Gmax";
 
