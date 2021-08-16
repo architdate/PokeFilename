@@ -53,6 +53,7 @@ steps:
           cd ILMerge\tools\net452
           xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\PokeFilename.GUI.dll .\
           xcopy ..\..\..\PokeFilename.API\bin\Release\net46\PokeFilename.API.dll .\
+          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\PKHeX.Core.dll .\
           ilmerge /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6" /out:$(Agent.BuildDirectory)\s\bin\PokeFilename.dll PokeFilename.GUI.dll PokeFilename.API.dll
 
     - task: PublishBuildArtifacts@1
