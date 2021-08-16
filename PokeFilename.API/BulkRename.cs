@@ -6,7 +6,7 @@ using PKHeX.Core;
 namespace PokeFilename.API
 {
     /// <summary>
-    /// Renames <see cref="PKM"/> files using a provided <see cref="EntityFileNamer"/> (or the current namer if none provided).
+    /// Renames <see cref="PKM"/> files using a provided <see cref="EntityFileNamer"/> (or the current naming style if none provided).
     /// </summary>
     public static class BulkRename
     {

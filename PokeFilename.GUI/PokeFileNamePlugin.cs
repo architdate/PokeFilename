@@ -35,7 +35,7 @@ namespace PokeFilename
         private void LoadMenuStrip(ToolStrip menuStrip)
         {
             var items = menuStrip.Items;
-            if (!(items.Find("Menu_Tools", false)[0] is ToolStripDropDownItem tools))
+            if (items.Find("Menu_Tools", false)[0] is not ToolStripDropDownItem tools)
                 throw new ArgumentException(nameof(menuStrip));
             AddPluginControl(tools);
         }

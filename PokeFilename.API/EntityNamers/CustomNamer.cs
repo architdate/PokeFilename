@@ -5,8 +5,8 @@ namespace PokeFilename.API
 {
     public sealed class CustomNamer : IFileNamer<PKM>
     {
-        public readonly string Regular;
-        public readonly string Gameboy;
+        private readonly string Regular;
+        private readonly string Gameboy;
 
         public CustomNamer(string regular, string gameboy)
         {
@@ -14,21 +14,9 @@ namespace PokeFilename.API
             Gameboy = gameboy;
         }
 
-        public string GetName(PKM obj)
-        {
-            string pattern = obj is GBPKM ? Gameboy : Regular;
-            return RemapKeywords(obj, pattern);
-        }
-
+        public string GetName(PKM obj) => RemapKeywords(obj, obj is GBPKM ? Gameboy : Regular);
         private static string RemapKeywords(PKM pk, string input) => Regex.Replace(input, "{(?<exp>[^}]+)}", match => GetStringValue(pk, match.Groups["exp"].Value));
-
-        private static string GetStringValue(PKM pk, string property)
-        {
-            var check = pk.GetPropertyValue(property, out string? text);
-            if (check)
-                return text!; // use ! because the above method has no annotations for NotNullWhen
-            return pk.GetValue(property);
-        }
+        private static string GetStringValue(PKM pk, string property) => pk.GetPropertyValue(property) ?? pk.GetValue(property);
     }
 
     public static class KeywordRemappingExtensions
@@ -46,6 +34,6 @@ namespace PokeFilename.API
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
-        private static string GetShinySymbol(PKM pk) => (pk is PB7 || pk.Format >= 8) && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
+        private static string GetShinySymbol(PKM pk) => pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
     }
 }

@@ -7,8 +7,8 @@ namespace PokeFilename
 {
     public static class SettingsLoader
     {
-        public static readonly string WorkingDirectory = Application.StartupPath;
-        public static readonly string ConfigPath = Path.Combine(WorkingDirectory, "namer.json");
+        private static readonly string WorkingDirectory = Application.StartupPath;
+        private static readonly string ConfigPath = Path.Combine(WorkingDirectory, "namer.json");
 
         public static EntityNamerSettings GetSettings() => GetSettings<EntityNamerSettings>(ConfigPath);
         public static void SetSettings(EntityNamerSettings obj) => SetSettings(obj, ConfigPath);
@@ -48,6 +48,7 @@ namespace PokeFilename
             catch
 #pragma warning restore CA1031 // Do not catch general exception types
             {
+                // ignored
             }
         }
     }

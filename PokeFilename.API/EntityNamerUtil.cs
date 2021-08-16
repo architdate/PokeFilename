@@ -1,109 +1,100 @@
-﻿using PKHeX.Core;
-using System;
+﻿using System;
 using System.Collections;
-using System.Linq;
+using PKHeX.Core;
 
 namespace PokeFilename.API
 {
     public static class EntityNamerUtil
     {
-        public static bool GetPropertyValue(this PKM pk, string prop, out string? value)
+        public static string? GetPropertyValue(this PKM pk, string prop)
         {
-            value = null;
-            string? formatter = null;
-            string? enumeration = null;
-            if (prop.Contains(':'))
-            {
-                formatter = prop.Split(':')[1];
-                prop = prop.Split(':')[0];
-            }
-            if (prop.StartsWith("(") && prop.Contains(')'))
-            {
-                enumeration = prop.Split(')')[0].Split('(')[1];
-                prop = prop.Split(new[] { ')' }, count: 2)[1];
-            }
-
+            var formatter = GetFormatter(ref prop);
+            var enumeration = GetEnumeration(ref prop);
             prop = prop.Trim();
+
             object? obj = pk;
             foreach (string part in prop.Split('.'))
             {
-                if (obj == null)
-                    return false;
-
                 if (obj.IsNonStringEnumerable())
                 {
                     var toEnumerable = (IEnumerable)obj;
                     var iterator = toEnumerable.GetEnumerator();
                     if (!iterator.MoveNext())
-                        return false;
+                        return null;
 
                     obj = iterator.Current;
                 }
 
                 if (obj == null)
-                    return false;
+                    return null;
 
-                Type type = obj.GetType();
+                var type = obj.GetType();
                 var info = type.GetProperty(part);
                 if (info == null)
-                    return false;
+                    return null;
 
                 obj = info.GetValue(obj, null);
+                if (obj == null)
+                    return null;
             }
 
             if (enumeration != null)
                 obj = ParseEnum(enumeration, obj);
-            if (obj == null)
-                return false;
 
-            value = obj.CustomFormat(formatter);
-            return true;
+            return obj?.CustomFormat(formatter);
+        }
+
+        private static string? GetFormatter(ref string prop)
+        {
+            int colon = prop.IndexOf(':');
+            if (colon == -1)
+                return null;
+
+            var formatter = prop[(colon + 1)..];
+            prop = prop[..colon];
+            return formatter;
+        }
+
+        private static string? GetEnumeration(ref string prop)
+        {
+            var openParen = prop.IndexOf('(');
+            if (openParen != 0)
+                return null;
+
+            int closeParen = prop.IndexOf(')');
+            if (closeParen == -1)
+                return null;
+
+            var enumeration = prop[1..closeParen];
+            prop = prop[(closeParen + 1)..];
+            return enumeration;
         }
 
         private static string CustomFormat(this object obj, string? formatter)
         {
             if (formatter == null)
                 return obj.ToString();
-
-            var type = obj.GetType();
-            return Type.GetTypeCode(type) switch
-            {
-                TypeCode.SByte => ((sbyte)obj).ToString(formatter),
-                TypeCode.Byte => ((byte)obj).ToString(formatter),
-                TypeCode.Int16 => ((short)obj).ToString(formatter),
-                TypeCode.UInt16 => ((ushort)obj).ToString(formatter),
-                TypeCode.Int32 => ((int)obj).ToString(formatter),
-                TypeCode.UInt32 => ((uint)obj).ToString(formatter),
-                TypeCode.Int64 => ((long)obj).ToString(formatter),
-                TypeCode.UInt64 => ((ulong)obj).ToString(formatter),
-                _ => obj.ToString()
-            };
+            if (obj is IFormattable f)
+                return f.ToString(formatter, System.Globalization.CultureInfo.CurrentCulture);
+            return obj.ToString();
         }
 
-        private static string? ParseEnum(string enumName, object value)
+        private static string? ParseEnum(string enumName, object value) => GetEnumType(enumName)?.GetEnumName(value);
+
+        private static Type? GetEnumType(string enumName)
         {
-            Type? type = null;
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                var name = assembly.FullName.Split(',')[0];
-                type = assembly.GetType(name + '.' + enumName);
-                if (type == null)
-                    continue;
-                if (type.IsEnum)
-                    break;
+                var qualified = assembly.FullName.Split(',')[0];
+                var typeName = $"{qualified}{'.'}{enumName}";
+                var type = assembly.GetType(typeName);
+                if (type?.IsEnum == true)
+                    return type;
             }
-            if (type is not { IsEnum: true })
-                return null;
-            return type.GetEnumName(value);
+            return null;
         }
 
-        private static bool IsNonStringEnumerable(this object? instance) => instance != null && instance.GetType().IsNonStringEnumerable();
-
-        private static bool IsNonStringEnumerable(this Type? type)
-        {
-            if (type == null || type == typeof(string))
-                return false;
-            return typeof(IEnumerable).IsAssignableFrom(type);
-        }
+        private static bool IsNonStringEnumerable(this object instance) => instance.GetType().IsNonStringEnumerable();
+        private static bool IsNonStringEnumerable(this Type type) => type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
     }
 }

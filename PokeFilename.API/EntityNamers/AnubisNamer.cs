@@ -43,7 +43,7 @@ namespace PokeFilename.API
         {
             if (!pk.IsShiny)
                 return string.Empty;
-            if ((pk is PB7 || pk.Format >= 8) && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
+            if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
                 return " ■";
             return " ★";
         }
@@ -53,7 +53,7 @@ namespace PokeFilename.API
             string form = gb.Form > 0 ? $"-{gb.Form:00}" : string.Empty;
             string star = gb.IsShiny ? " ★" : string.Empty;
 
-            string IVList = gb.IV_HP + "." + gb.IV_ATK + "." + gb.IV_DEF + "." + gb.IV_SPA + "." + gb.IV_SPD + "." + gb.IV_SPE;
+            string IVList = $"{gb.IV_HP}.{gb.IV_ATK}.{gb.IV_DEF}.{gb.IV_SPA}.{gb.IV_SPD}.{gb.IV_SPE}";
             string speciesName = SpeciesName.GetSpeciesNameGeneration(gb.Species, (int)LanguageID.English, gb.Format);
             string OTInfo = string.IsNullOrEmpty(gb.OT_Name) ? "" : $" - {gb.OT_Name} - {gb.TID:00000}";
 
