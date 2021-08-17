@@ -5,7 +5,7 @@ using PokeFilename.API;
 
 namespace PokeFilename
 {
-    public class PokeFilename : IPlugin
+    public sealed class PokeFileNamePlugin : IPlugin
     {
         public string Name => "PokéFilename";
         public int Priority => 1; // Loading order, lowest is first.
@@ -13,6 +13,8 @@ namespace PokeFilename
         // Initialized on plugin load
         public ISaveFileProvider SaveFileEditor { get; private set; } = null!;
         public IPKMView PKMEditor { get; private set; } = null!;
+
+        private readonly EntityNamerSettings Settings = SettingsLoader.GetSettings();
 
         public void Initialize(params object[] args)
         {
@@ -22,21 +24,18 @@ namespace PokeFilename
             var menu = (ToolStrip)Array.Find(args, z => z is ToolStrip);
             LoadMenuStrip(menu);
 
-            SetNamerSettings();
+            SetNamerSettings(Settings);
         }
 
-        public static void SetNamerSettings()
+        public static void SetNamerSettings(EntityNamerSettings settings)
         {
-            var settings = Utils.Settings;
-            CustomNamer.Regular = settings.RegularFormat;
-            CustomNamer.Gameboy = settings.GameboyFormat;
-            EntityFileNamer.Namer = Utils.Create(settings.PKMNamer.ToString());
+            EntityFileNamer.Namer = settings.Create();
         }
 
         private void LoadMenuStrip(ToolStrip menuStrip)
         {
             var items = menuStrip.Items;
-            if (!(items.Find("Menu_Tools", false)[0] is ToolStripDropDownItem tools))
+            if (items.Find("Menu_Tools", false)[0] is not ToolStripDropDownItem tools)
                 throw new ArgumentException(nameof(menuStrip));
             AddPluginControl(tools);
         }
@@ -49,11 +48,12 @@ namespace PokeFilename
             tools.DropDownItems.Add(ctrl);
         }
 
-        private static void OpenSettings(object sender, EventArgs e)
+        private void OpenSettings(object sender, EventArgs e)
         {
-            var settings = Utils.Settings;
-            using var form = new SettingsForm(settings);
+            using var form = new SettingsForm(Settings);
             form.ShowDialog();
+            SetNamerSettings(Settings);
+            SettingsLoader.SetSettings(Settings);
         }
 
         public void NotifySaveLoaded()

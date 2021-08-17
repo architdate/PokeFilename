@@ -5,55 +5,30 @@ namespace PokeFilename.API
 {
     public sealed class CustomNamer : IFileNamer<PKM>
     {
-        public static string Regular = Properties.PokeFilename.Default.RegularFormat;
-        public static string Gameboy = Properties.PokeFilename.Default.GameboyFormat;
-        public string GetName(PKM obj)
+        private readonly string Regular;
+        private readonly string Gameboy;
+
+        public CustomNamer(string regular, string gameboy)
         {
-            if (obj is GBPKM gb)
-                return GetGBPKM(gb);
-            return GetRegular(obj);
+            Regular = regular;
+            Gameboy = gameboy;
         }
 
-        private string GetRegular(PKM obj)
-        {
-            var finstr = Regex.Replace(Regular, @"{(?<exp>[^}]+)}", match =>
-                {
-                    var p = match.Groups["exp"].Value;
-                    var check = obj.GetPropertyValue(p, out string? v);
-                    if (check) return v;
-                    return CustomExtensions.GetValue(obj, p);
-                }
-            );
-            return finstr;
-        }
-
-        private string GetGBPKM(GBPKM gb)
-        {
-            var finstr = Regex.Replace(Gameboy, @"{(?<exp>[^}]+)}", match =>
-                {
-                    var p = match.Groups["exp"].Value;
-                    var check = gb.GetPropertyValue(p, out string? v);
-                    if (check) return v;
-                    return CustomExtensions.GetValue(gb, p);
-                }
-            );
-            return finstr;
-        }
+        public string GetName(PKM obj) => RemapKeywords(obj, obj is GBPKM ? Gameboy : Regular);
+        private static string RemapKeywords(PKM pk, string input) => Regex.Replace(input, "{(?<exp>[^}]+)}", match => GetStringValue(pk, match.Groups["exp"].Value));
+        private static string GetStringValue(PKM pk, string property) => pk.GetPropertyValue(property) ?? pk.GetValue(property);
     }
 
-    public static class CustomExtensions
+    public static class KeywordRemappingExtensions
     {
-        public static string GetValue(PKM pk, string prop)
+        public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            return prop switch
-            {
-                "ShinySymbol" => GetShinySymbol(pk),
-                "CharacteristicText" => GetCharacteristicText(pk),
-                "ConditionalForm" => GetConditionalForm(pk),
-                "Legality" => GetLegalityStatus(pk),
-                _ => "{" + prop + "}"
-            };
-        }
+            "ShinySymbol"        => GetShinySymbol(pk),
+            "CharacteristicText" => GetCharacteristicText(pk),
+            "ConditionalForm"    => GetConditionalForm(pk),
+            "Legality"           => GetLegalityStatus(pk),
+            _                    => $"{{{prop}}}"
+        };
 
         // Extensions
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
