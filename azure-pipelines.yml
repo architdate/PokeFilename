@@ -59,6 +59,7 @@ steps:
           xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.Memory.dll .\
           xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.ValueTuple.dll .\
           xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.Runtime.CompilerServices.Unsafe.dll .\
+          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\Newtonsoft.Json.dll .\
           ilmerge /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6" /out:$(Agent.BuildDirectory)\s\bin\PokeFilename.dll PokeFilename.GUI.dll PokeFilename.API.dll
 
     - task: PublishBuildArtifacts@1
