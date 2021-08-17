@@ -14,7 +14,7 @@ namespace PokeFilename
         public ISaveFileProvider SaveFileEditor { get; private set; } = null!;
         public IPKMView PKMEditor { get; private set; } = null!;
 
-        private readonly EntityNamerSettings Settings = SettingsLoader.GetSettings();
+        public static readonly EntityNamerSettings Settings = SettingsLoader.GetSettings();
 
         public void Initialize(params object[] args)
         {

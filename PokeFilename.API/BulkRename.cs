@@ -41,6 +41,7 @@ namespace PokeFilename.API
             {
                 var fileName = files[i];
                 var tmp = GetTempPath(fileName, i);
+                var dir = Path.GetDirectoryName(tmp);
                 var fi = new FileInfo(tmp);
                 if (PKX.IsPKM(fi.Length))
                 {
@@ -49,15 +50,16 @@ namespace PokeFilename.API
                     var fmt = PKX.GetPKMFormatFromExtension(ext, 6);
                     var pkm = PKMConverter.GetPKMfromBytes(data, fmt);
                     if (pkm is not null)
-                        fileName = GetUniqueFileName(pkm, namer);
+                        fileName = $"{GetUniqueFileName(pkm, namer)}{ext}";
                 }
-                File.Move(tmp, fileName);
+                File.Move(tmp, Path.Combine(dir, fileName));
             }
         }
 
         private static string GetUniqueFileName(PKM pk, IFileNamer<PKM> namer)
         {
             var result = namer.GetName(pk);
+            result = string.Concat(result.Split(Path.GetInvalidFileNameChars()));
             if (!File.Exists(result))
                 return result;
 
