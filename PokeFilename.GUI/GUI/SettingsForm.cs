@@ -28,17 +28,23 @@ namespace PokeFilename
 
         private void B_BulkRename_Click(object sender, System.EventArgs e)
         {
-            var settings = PokeFileNamePlugin.Settings;
-            var folderpath = settings.BulkRenameFolderPath;
-            if (!System.IO.Directory.Exists(folderpath))
+            using (var fbd = new FolderBrowserDialog())
             {
-                WinformsUtil.Error("No such folder exists. Please make sure that the BulkRenameFolderPath is valid.");
-                return;
+                DialogResult result = fbd.ShowDialog();
+                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    WinformsUtil.Alert("Rename Cancelled!");
+                    return;
+                }
+                result = WinformsUtil.Prompt(MessageBoxButtons.YesNo, "Recursively Rename Files?");
+                var deep = false;
+                if (result == DialogResult.Yes)
+                    deep = true;
+                var settings = PokeFileNamePlugin.Settings;
+                EntityFileNamer.Namer = settings.Create();
+                BulkRename.RenameFolder(fbd.SelectedPath, deep);
+                WinformsUtil.Alert($"Rename Complete. All files have been renamed using {settings.Namer}");
             }
-            EntityFileNamer.Namer = settings.Create();
-            var deep = settings.RecursiveRename;
-            BulkRename.RenameFolder(folderpath, deep);
-            WinformsUtil.Alert($"Rename Complete. All files have been renamed using {settings.Namer}");
         }
 
         private void InitializeComponent()

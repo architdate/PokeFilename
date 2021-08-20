@@ -14,12 +14,6 @@ namespace PokeFilename.API
         [Category("CustomNamer Settings"), Description("PKM Name format for Gameboy Pokemon")]
         public string CustomPatternGameBoy { get; set; } = "{Species} - {Nickname} - {DV16}";
 
-        [Category("Bulk Rename Settings"), Description("Folder path to Bulk Rename")]
-        public string BulkRenameFolderPath { get; set; } = string.Empty;
-
-        [Category("Bulk Rename Settings"), Description("Rename all files recursively in subfolders")]
-        public bool RecursiveRename { get; set; } = true;
-
         public IFileNamer<PKM> Create() => Namer switch
         {
             EntityNamers.AnubisNamer => new AnubisNamer(),
