@@ -7,6 +7,7 @@ namespace PokeFilename.API
     {
         private readonly string Regular;
         private readonly string Gameboy;
+        public static readonly GameStrings Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
 
         public CustomNamer(string regular, string gameboy)
         {
@@ -27,6 +28,7 @@ namespace PokeFilename.API
             "CharacteristicText" => GetCharacteristicText(pk),
             "ConditionalForm"    => GetConditionalForm(pk),
             "Legality"           => GetLegalityStatus(pk),
+            "ItemName"           => GetItemName(pk),
             _                    => $"{{{prop}}}"
         };
 
@@ -35,5 +37,14 @@ namespace PokeFilename.API
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
         private static string GetShinySymbol(PKM pk) => pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
+        private static string GetItemName(PKM pk)
+        {
+            if (pk.HeldItem <= 0)
+                return "NoItem";
+            var items = CustomNamer.Strings.GetItemStrings(pk.Format);
+            if (pk.HeldItem < items.Length)
+                return items[pk.HeldItem];
+            return "NoItem";
+        }
     }
 }
