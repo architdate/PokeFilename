@@ -19,7 +19,8 @@ namespace PokeFilename.API
             string IVList = $"{pk.IV_HP}.{pk.IV_ATK}.{pk.IV_DEF}.{pk.IV_SPA}.{pk.IV_SPD}.{pk.IV_SPE}";
 
             string TIDFormatted = pk.Generation >= 7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
-            string ballFormatted = GameInfo.Strings.balllist[pk.Ball].Split(' ')[0];
+            var balllist = GameInfo.Strings.balllist;
+            string ballFormatted = pk.Ball < balllist.Length ? balllist[pk.Ball].Split(' ')[0] : "???";
 
             string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, pk.Format);
             if (pk is IGigantamax { CanGigantamax: true })
