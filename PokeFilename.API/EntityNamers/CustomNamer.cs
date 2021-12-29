@@ -24,7 +24,7 @@ namespace PokeFilename.API
     {
         public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            "ShinySymbol"        => GetShinySymbol(pk),
+            "ShinyType"        => GetShinyTypeString(pk),
             "CharacteristicText" => GetCharacteristicText(pk),
             "ConditionalForm"    => GetConditionalForm(pk),
             "Legality"           => GetLegalityStatus(pk),
@@ -36,7 +36,15 @@ namespace PokeFilename.API
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
-        private static string GetShinySymbol(PKM pk) => pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int)GameVersion.GO) ? "■" : "★";
+
+        private static string GetShinyTypeString(PKM pk) { //Copied from AnubisNamer
+          if (!pk.IsShiny)
+            return string.Empty;
+        if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
+            return " ■";
+        return " ★";
+      }
+
         private static string GetItemName(PKM pk)
         {
             if (pk.HeldItem <= 0)
