@@ -24,7 +24,7 @@ namespace PokeFilename.API
     {
         public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            "ShinyType"        => GetShinyTypeString(pk),
+            "ShinyType"          => GetShinyTypeString(pk),
             "CharacteristicText" => GetCharacteristicText(pk),
             "ConditionalForm"    => GetConditionalForm(pk),
             "Legality"           => GetLegalityStatus(pk),
