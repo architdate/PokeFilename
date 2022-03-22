@@ -28,7 +28,9 @@ namespace PokeFilename.API
 
             string OTInfo = string.IsNullOrEmpty(pk.OT_Name) ? "" : $" - {pk.OT_Name} - {TIDFormatted} - {ballFormatted}";
 
-            return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {pk.Checksum:X4}{pk.EncryptionConstant:X8}";
+            var chk = pk is ISanityChecksum s ? s.Checksum : PokeCrypto.GetCHK(pk.Data, pk.SIZE_STORED);
+
+            return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {chk:X4}{pk.EncryptionConstant:X8}";
         }
 
         private static string GetNature(INature pk)
