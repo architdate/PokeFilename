@@ -1,4 +1,4 @@
-﻿using PKHeX.Core;
+using PKHeX.Core;
 using System.Text.RegularExpressions;
 
 namespace PokeFilename.API
@@ -24,26 +24,43 @@ namespace PokeFilename.API
     {
         public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            "ShinyType"          => GetShinyTypeString(pk),
-            "CharacteristicText" => GetCharacteristicText(pk),
-            "ConditionalForm"    => GetConditionalForm(pk),
-            "Legality"           => GetLegalityStatus(pk),
-            "ItemName"           => GetItemName(pk),
-            _                    => $"{{{prop}}}"
+            "ShinyType"             => GetShinyTypeString(pk),
+            "CharacteristicText"    => GetCharacteristicText(pk),
+            "ConditionalForm"       => GetConditionalForm(pk),
+            "FormName"              => GetFormName(pk),
+            "ConditionalFormName"   => GetConditionalFormName(pk),
+            "Gigantamax"            => GetGigantamax(pk),
+            "ConditionalGigantamax" => GetConditionalGigantamax(pk),
+            "Legality"              => GetLegalityStatus(pk),
+            "ItemName"              => GetItemName(pk),
+            _                       => $"{{{prop}}}"
         };
 
         // Extensions
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
+        private static string GetGigantamax(PKM pk) => (pk is IGigantamax g && g.CanGigantamax) ? "Gigantamax" : string.Empty;
+        private static string GetConditionalGigantamax(PKM pk) => (pk is IGigantamax g && g.CanGigantamax) ? "(Gigantamax)" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
 
         private static string GetShinyTypeString(PKM pk) { //Copied from AnubisNamer
-          if (!pk.IsShiny)
-            return string.Empty;
-        if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
-            return " ■";
-        return " ★";
-      }
+            if (!pk.IsShiny)
+                return string.Empty;
+            if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
+                return " ■";
+            return " ★";
+        }
+
+        private static string GetFormName(PKM pk) {
+            var Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
+            string FormString = ShowdownParsing.GetStringFromForm(pk.Form, Strings, pk.Species, pk.Format);
+            string FormName = ShowdownParsing.GetShowdownFormName(pk.Species, FormString);
+            return FormName;
+        }
+        private static string GetConditionalFormName(PKM pk) {
+            string formName = GetFormName(pk);
+            return string.IsNullOrEmpty(formName) ? string.Empty : $"({formName})";
+        }
 
         private static string GetItemName(PKM pk)
         {
