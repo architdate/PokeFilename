@@ -1,4 +1,4 @@
-using PKHeX.Core;
+﻿using PKHeX.Core;
 using System.Text.RegularExpressions;
 
 namespace PokeFilename.API
@@ -15,7 +15,7 @@ namespace PokeFilename.API
             Gameboy = gameboy;
         }
 
-        public string GetName(PKM obj) => RemapKeywords(obj, obj is GBPKM ? Gameboy : Regular);
+        public string GetName(PKM obj) => Regex.Replace(RemapKeywords(obj, obj is GBPKM ? Gameboy : Regular), @"\s+", " ");
         private static string RemapKeywords(PKM pk, string input) => Regex.Replace(input, "{(?<exp>[^}]+)}", match => GetStringValue(pk, match.Groups["exp"].Value));
         private static string GetStringValue(PKM pk, string property) => pk.GetPropertyValue(property) ?? pk.GetValue(property);
     }
