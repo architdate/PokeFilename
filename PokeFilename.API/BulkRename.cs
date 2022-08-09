@@ -43,12 +43,12 @@ namespace PokeFilename.API
                 var tmp = GetTempPath(fileName, i);
                 var dir = Path.GetDirectoryName(tmp);
                 var fi = new FileInfo(tmp);
-                if (PKX.IsPKM(fi.Length))
+                if (EntityDetection.IsSizePlausible(fi.Length))
                 {
                     var data = File.ReadAllBytes(tmp);
                     var ext = Path.GetExtension(fileName);
-                    var fmt = PKX.GetPKMFormatFromExtension(ext, 6);
-                    var pkm = PKMConverter.GetPKMfromBytes(data, fmt);
+                    var ctx = EntityFileExtension.GetContextFromExtension(ext, EntityContext.None);
+                    var pkm = EntityFormat.GetFromBytes(data, ctx);
                     if (pkm is not null)
                         fileName = $"{GetUniqueFileName(pkm, namer)}{ext}";
                 }
