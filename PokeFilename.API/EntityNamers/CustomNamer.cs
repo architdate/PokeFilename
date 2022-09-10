@@ -53,7 +53,7 @@ namespace PokeFilename.API
 
         private static string GetFormName(PKM pk) {
             var Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
-            string FormString = ShowdownParsing.GetStringFromForm(pk.Form, Strings, pk.Species, (EntityContext)pk.Format);
+            string FormString = ShowdownParsing.GetStringFromForm(pk.Form, Strings, pk.Species, pk.Context);
             string FormName = ShowdownParsing.GetShowdownFormName(pk.Species, FormString);
             return FormName;
         }
@@ -66,7 +66,7 @@ namespace PokeFilename.API
         {
             if (pk.HeldItem <= 0)
                 return "NoItem";
-            var items = CustomNamer.Strings.GetItemStrings((EntityContext)pk.Format);
+            var items = CustomNamer.Strings.GetItemStrings(pk.Context);
             if (pk.HeldItem < items.Length)
                 return items[pk.HeldItem];
             return "NoItem";
