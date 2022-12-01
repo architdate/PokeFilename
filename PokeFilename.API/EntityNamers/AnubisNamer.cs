@@ -19,7 +19,7 @@ namespace PokeFilename.API
             string IVList = $"{pk.IV_HP}.{pk.IV_ATK}.{pk.IV_DEF}.{pk.IV_SPA}.{pk.IV_SPD}.{pk.IV_SPE}";
 
             var useTID7 = pk.Generation >= 7 || (pk.Format == 9 && pk.IsEgg);
-            string TIDFormatted = useTID7 >= 7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
+            string TIDFormatted = useTID7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
             var balllist = GameInfo.Strings.balllist;
             string ballFormatted = pk.Ball < balllist.Length ? balllist[pk.Ball].Split(' ')[0] : "???";
 
