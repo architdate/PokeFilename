@@ -16,12 +16,15 @@ variables:
     
 steps:
     - task: UseDotNet@2
-      displayName: Use .NET 6.0
+      displayName: Use .NET 7.0
       inputs:
         packageType: 'sdk'
-        version: '6.0.x'
+        version: '7.0.x'
 
     - task: NuGetToolInstaller@1
+      inputs:
+        versionSpec: '>=6.4.0'
+        checkLatest: true
     
     - task: NuGetCommand@2
       inputs:
@@ -29,21 +32,24 @@ steps:
     
     - powershell: |
         git clone -q --depth=5 --branch=master https://github.com/kwsch/PKHeX.git $(Build.SourcesDirectory)/PKHeX
+    
     - task: NuGetCommand@2
       inputs:
+        command: 'restore'
         restoreSolution: '$(Build.SourcesDirectory)/PKHeX/PKHeX.sln'
+        noCache: true
     
-    - task: VSBuild@1
+    - task: MSBuild@1
       inputs:
-        solution: '$(Build.SourcesDirectory)/PKHeX/PKHeX.sln'
+        solution: '$(Build.SourcesDirectory)/PKHeX/PKHeX.Core/PKHeX.Core.csproj'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
         createLogFile: true
     
     - powershell: |
         $nugetver = (Get-ChildItem "$(UserProfile)/.nuget/packages/pkhex.core" | Sort-Object -Property LastWriteTime -Descending)[0].Name
-        Copy-Item "$(Build.SourcesDirectory)\pkhex\PKHeX.Core\bin\Release\net46\PKHeX.Core.dll" "$(UserProfile)\.nuget\packages\pkhex.core\$nugetver\lib\net46"
-        Copy-Item "$(Build.SourcesDirectory)\pkhex\PKHeX.Core\bin\Release\netstandard2.0\PKHeX.Core.dll" "$(UserProfile)\.nuget\packages\pkhex.core\$nugetver\lib\netstandard2.0"
+        Copy-Item "$(Build.SourcesDirectory)\pkhex\PKHeX.Core\bin\Any CPU\Release\net7.0\PKHeX.Core.dll" "$(UserProfile)\.nuget\packages\pkhex.core\$nugetver\lib\net7.0"
+    
     - task: VSBuild@1
       inputs:
         solution: '$(solution)'
@@ -55,18 +61,8 @@ steps:
       inputs:
         script: |
           mkdir bin
-          nuget install ILMerge -ExcludeVersion
-          cd ILMerge\tools\net452
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\PokeFilename.GUI.dll .\
-          xcopy ..\..\..\PokeFilename.API\bin\Release\net46\PokeFilename.API.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\PKHeX.Core.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\IndexRange.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.Buffers.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.Memory.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.ValueTuple.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\System.Runtime.CompilerServices.Unsafe.dll .\
-          xcopy ..\..\..\PokeFilename.GUI\bin\Release\net46\Newtonsoft.Json.dll .\
-          ilmerge /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6" /out:$(Agent.BuildDirectory)\s\bin\PokeFilename.dll PokeFilename.GUI.dll PokeFilename.API.dll
+          ren $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Debug\net7.0-windows\PokeFilename.GUI.dll $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Debug\net7.0-windows\PokeFilename.dll
+          xcopy $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Debug\net7.0-windows\PokeFilename.dll $(Agent.BuildDirectory)\s\bin
 
     - task: PublishBuildArtifacts@1
       inputs:
