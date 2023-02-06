@@ -61,7 +61,7 @@ steps:
       inputs:
         script: |
           mkdir bin
-          ren $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Release\net7.0-windows\PokeFilename.GUI.dll $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Release\net7.0-windows\PokeFilename.dll
+          rename $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Release\net7.0-windows\PokeFilename.GUI.dll PokeFilename.dll
           xcopy $(Agent.BuildDirectory)\s\PokeFilename.GUI\bin\Release\net7.0-windows\PokeFilename.dll $(Agent.BuildDirectory)\s\bin
 
     - task: PublishBuildArtifacts@1
