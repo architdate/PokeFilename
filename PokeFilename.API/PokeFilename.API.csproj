@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <LangVersion>9</LangVersion>
+    <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PKHeX.Core" Version="22.11.24" />
+    <PackageReference Include="PKHeX.Core" Version="23.1.30" />
   </ItemGroup>
 
 </Project>

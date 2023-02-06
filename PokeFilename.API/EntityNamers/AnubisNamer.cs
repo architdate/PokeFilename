@@ -1,4 +1,5 @@
 ﻿using PKHeX.Core;
+using System;
 
 namespace PokeFilename.API
 {
@@ -19,7 +20,7 @@ namespace PokeFilename.API
             string IVList = $"{pk.IV_HP}.{pk.IV_ATK}.{pk.IV_DEF}.{pk.IV_SPA}.{pk.IV_SPD}.{pk.IV_SPE}";
 
             var useTID7 = pk.Generation >= 7 || (pk.Format == 9 && pk.IsEgg);
-            string TIDFormatted = useTID7 ? $"{pk.TrainerID7:000000}" : $"{pk.TID:00000}";
+            string TIDFormatted = useTID7 ? $"{pk.DisplayTID:000000}" : $"{pk.TID16:00000}";
             var balllist = GameInfo.Strings.balllist;
             string ballFormatted = pk.Ball < balllist.Length ? balllist[pk.Ball].Split(' ')[0] : "???";
 
@@ -29,7 +30,7 @@ namespace PokeFilename.API
 
             string OTInfo = string.IsNullOrEmpty(pk.OT_Name) ? "" : $" - {pk.OT_Name} - {TIDFormatted} - {ballFormatted}";
 
-            var chk = pk is ISanityChecksum s ? s.Checksum : PokeCrypto.GetCHK(pk.Data, pk.SIZE_STORED);
+            var chk = pk is ISanityChecksum s ? s.Checksum : PokeCrypto.GetCHK(pk.Data.AsSpan()[8..pk.SIZE_STORED]);
 
             return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {chk:X4}{pk.EncryptionConstant:X8}";
         }
@@ -59,7 +60,7 @@ namespace PokeFilename.API
 
             string IVList = $"{gb.IV_HP}.{gb.IV_ATK}.{gb.IV_DEF}.{gb.IV_SPA}.{gb.IV_SPD}.{gb.IV_SPE}";
             string speciesName = SpeciesName.GetSpeciesNameGeneration(gb.Species, (int)LanguageID.English, gb.Format);
-            string OTInfo = string.IsNullOrEmpty(gb.OT_Name) ? "" : $" - {gb.OT_Name} - {gb.TID:00000}";
+            string OTInfo = string.IsNullOrEmpty(gb.OT_Name) ? "" : $" - {gb.OT_Name} - {gb.TID16:00000}";
 
             var raw = gb switch
             {

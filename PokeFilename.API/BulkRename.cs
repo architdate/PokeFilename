@@ -13,7 +13,9 @@ namespace PokeFilename.API
         /// <summary>
         /// Gets a temporary file name within the same directory for a bulk rename operation.
         /// </summary>
+#pragma warning disable CS8604 // Possible null reference argument.
         private static string GetTempPath(string fileName, int index) => Path.Combine(Path.GetDirectoryName(fileName), $"{index}.tmp");
+#pragma warning restore CS8604 // Possible null reference argument.
 
         public static void RenameAll(IReadOnlyList<string> files) => RenameAll(files, EntityFileNamer.Namer);
         public static void RenameAll(IEnumerable<string> files) => RenameAll(files, EntityFileNamer.Namer);
@@ -52,7 +54,9 @@ namespace PokeFilename.API
                     if (pkm is not null)
                         fileName = $"{GetUniqueFileName(pkm, namer)}{ext}";
                 }
+#pragma warning disable CS8604 // Possible null reference argument.
                 File.Move(tmp, Path.Combine(dir, fileName));
+#pragma warning restore CS8604 // Possible null reference argument.
             }
         }
 

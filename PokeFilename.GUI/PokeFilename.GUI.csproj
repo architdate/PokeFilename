@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <OutputType>Library</OutputType>
-    <LangVersion>9</LangVersion>
+    <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="PKHeX.Core" Version="22.11.24" />
+    <PackageReference Include="PKHeX.Core" Version="23.1.30" />
   </ItemGroup>
 
   <ItemGroup>
