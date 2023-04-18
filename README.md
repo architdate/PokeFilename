@@ -31,6 +31,7 @@ To use the plugins:
 
 ## Support Server
 Come join the dedicated Discord server for this mod! Ask questions, give suggestions, get help, or just hang out. Don't be shy, we don't bite:
+To unlock the help channel, use `!unlock hammerhead` in the `bot-testing` channel.
 
 [<img src="https://canary.discordapp.com/api/guilds/401014193211441153/widget.png?style=banner2">](https://discord.gg/tDMvSRv)
 
