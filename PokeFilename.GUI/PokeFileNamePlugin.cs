@@ -19,9 +19,9 @@ namespace PokeFilename
         public void Initialize(params object[] args)
         {
             Console.WriteLine($"Loading {Name}...");
-            SaveFileEditor = (ISaveFileProvider)Array.Find(args, z => z is ISaveFileProvider);
-            PKMEditor = (IPKMView)Array.Find(args, z => z is IPKMView);
-            var menu = (ToolStrip)Array.Find(args, z => z is ToolStrip);
+            SaveFileEditor = (ISaveFileProvider)Array.Find(args, z => z is ISaveFileProvider)!;
+            PKMEditor = (IPKMView)Array.Find(args, z => z is IPKMView)!;
+            var menu = (ToolStrip)Array.Find(args, z => z is ToolStrip)!;
             LoadMenuStrip(menu);
 
             SetNamerSettings(Settings);
@@ -48,7 +48,7 @@ namespace PokeFilename
             tools.DropDownItems.Add(ctrl);
         }
 
-        private void OpenSettings(object sender, EventArgs e)
+        private void OpenSettings(object? sender, EventArgs e)
         {
             using var form = new SettingsForm(Settings);
             form.ShowDialog();

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using PokeFilename.API;
+using System.Text.Json;
 
 namespace PokeFilename
 {
@@ -20,12 +20,10 @@ namespace PokeFilename
 
             try
             {
-                var lines = File.ReadAllText(configPath);
-                return JsonConvert.DeserializeObject<T>(lines) ?? new T();
+                var text = File.ReadAllText(configPath);
+                return JsonSerializer.Deserialize<T>(text)!;
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch
-#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return new T();
             }
@@ -35,18 +33,11 @@ namespace PokeFilename
         {
             try
             {
-                var settings = new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented,
-                    DefaultValueHandling = DefaultValueHandling.Populate,
-                    NullValueHandling = NullValueHandling.Ignore,
-                };
-                var text = JsonConvert.SerializeObject(cfg, settings);
-                File.WriteAllText(path, text);
+                JsonSerializerOptions options = new() { WriteIndented = true };
+                string output = JsonSerializer.Serialize(cfg, options);
+                File.WriteAllText(path, output);
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch
-#pragma warning restore CA1031 // Do not catch general exception types
             {
                 // ignored
             }

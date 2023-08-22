@@ -2,7 +2,6 @@
 	<Costura>
 		<IncludeAssemblies>
 			PokeFilename.API
-			Newtonsoft.Json
 		</IncludeAssemblies>
 	</Costura>
 </Weavers>

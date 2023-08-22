@@ -11,76 +11,70 @@ namespace PokeFilename
 
         public SettingsForm(object obj)
         {
-            if (PG_Settings == null)
-                PG_Settings = new PropertyGrid();
-            if (B_BulkRename == null)
-                B_BulkRename = new Button();
+            PG_Settings ??= new PropertyGrid();
+            B_BulkRename ??= new Button();
             InitializeComponent();
             PG_Settings.SelectedObject = obj;
             CenterToParent();
+            KeyDown += SettingsEditor_KeyDown;
         }
 
-        private void SettingsEditor_KeyDown(object sender, KeyEventArgs e)
+        private void SettingsEditor_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.W && ModifierKeys == Keys.Control)
                 Close();
         }
 
-        private void B_BulkRename_Click(object sender, System.EventArgs e)
+        private void B_BulkRename_Click(object? sender, System.EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog())
+            using var fbd = new FolderBrowserDialog();
+            DialogResult result = fbd.ShowDialog();
+            if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-                DialogResult result = fbd.ShowDialog();
-                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                    WinformsUtil.Alert("Rename Cancelled!");
-                    return;
-                }
-                result = WinformsUtil.Prompt(MessageBoxButtons.YesNo, "Recursively Rename Files?");
-                var deep = false;
-                if (result == DialogResult.Yes)
-                    deep = true;
-                var settings = PokeFileNamePlugin.Settings;
-                EntityFileNamer.Namer = settings.Create();
-                BulkRename.RenameFolder(fbd.SelectedPath, deep);
-                WinformsUtil.Alert($"Rename Complete. All files have been renamed using {settings.Namer}");
+                WinformsUtil.Alert("Rename Cancelled!");
+                return;
             }
+            result = WinformsUtil.Prompt(MessageBoxButtons.YesNo, "Recursively Rename Files?");
+            bool deep = result == DialogResult.Yes;
+            var settings = PokeFileNamePlugin.Settings;
+            EntityFileNamer.Namer = settings.Create();
+            BulkRename.RenameFolder(fbd.SelectedPath, deep);
+            WinformsUtil.Alert($"Rename Complete. All files have been renamed using {settings.Namer}");
         }
 
         private void InitializeComponent()
         {
-            this.PG_Settings = new System.Windows.Forms.PropertyGrid();
-            this.B_BulkRename = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            PG_Settings = new PropertyGrid();
+            B_BulkRename = new Button();
+            SuspendLayout();
             // 
             // PG_Settings
             // 
-            this.PG_Settings.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PG_Settings.Location = new System.Drawing.Point(0, 0);
-            this.PG_Settings.Name = "PG_Settings";
-            this.PG_Settings.Size = new System.Drawing.Size(285, 260);
-            this.PG_Settings.TabIndex = 1;
+            PG_Settings.Dock = DockStyle.Top;
+            PG_Settings.Location = new System.Drawing.Point(0, 0);
+            PG_Settings.Name = "PG_Settings";
+            PG_Settings.Size = new System.Drawing.Size(285, 260);
+            PG_Settings.TabIndex = 1;
             // 
             // B_BulkRename
             // 
-            this.B_BulkRename.Location = new System.Drawing.Point(0, 266);
-            this.B_BulkRename.Name = "B_BulkRename";
-            this.B_BulkRename.Size = new System.Drawing.Size(285, 23);
-            this.B_BulkRename.TabIndex = 2;
-            this.B_BulkRename.Text = "Bulk Rename";
-            this.B_BulkRename.UseVisualStyleBackColor = true;
-            this.B_BulkRename.Click += new System.EventHandler(this.B_BulkRename_Click);
+            B_BulkRename.Location = new System.Drawing.Point(0, 266);
+            B_BulkRename.Name = "B_BulkRename";
+            B_BulkRename.Size = new System.Drawing.Size(285, 23);
+            B_BulkRename.TabIndex = 2;
+            B_BulkRename.Text = "Bulk Rename";
+            B_BulkRename.UseVisualStyleBackColor = true;
+            B_BulkRename.Click += B_BulkRename_Click;
             // 
             // SettingsForm
             // 
-            this.ClientSize = new System.Drawing.Size(285, 293);
-            this.Controls.Add(this.B_BulkRename);
-            this.Controls.Add(this.PG_Settings);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.Name = "SettingsForm";
-            this.Text = "PokeFilename Settings";
-            this.ResumeLayout(false);
-
+            ClientSize = new System.Drawing.Size(285, 293);
+            Controls.Add(B_BulkRename);
+            Controls.Add(PG_Settings);
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            Name = "SettingsForm";
+            Text = "PokeFilename Settings";
+            ResumeLayout(false);
         }
     }
 }

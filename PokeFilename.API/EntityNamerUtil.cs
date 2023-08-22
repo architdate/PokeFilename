@@ -70,7 +70,7 @@ namespace PokeFilename.API
             return enumeration;
         }
 
-        private static string CustomFormat(this object obj, string? formatter)
+        private static string? CustomFormat(this object obj, string? formatter)
         {
             if (formatter == null)
                 return obj.ToString();
@@ -85,7 +85,7 @@ namespace PokeFilename.API
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                var qualified = assembly.FullName.Split(',')[0];
+                var qualified = assembly.FullName!.Split(',')[0]!;
                 var typeName = $"{qualified}{'.'}{enumName}";
                 var type = assembly.GetType(typeName);
                 if (type?.IsEnum == true)
