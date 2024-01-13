@@ -5,6 +5,8 @@ namespace PokeFilename.API
 {
     public sealed class AnubisNamer : IFileNamer<PKM>
     {
+        public string Name => "Default";
+
         public string GetName(PKM obj)
         {
             if (obj is GBPKM gb)

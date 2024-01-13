@@ -5,6 +5,8 @@ namespace PokeFilename.API
 {
     public sealed class CustomNamer : IFileNamer<PKM>
     {
+        public string Name => "Default";
+
         private readonly string Regular;
         private readonly string Gameboy;
         public static readonly GameStrings Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
