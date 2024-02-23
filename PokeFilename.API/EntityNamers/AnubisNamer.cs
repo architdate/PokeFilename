@@ -30,7 +30,7 @@ namespace PokeFilename.API
             if (pk is IGigantamax { CanGigantamax: true })
                 speciesName += "-Gmax";
 
-            string OTInfo = string.IsNullOrEmpty(pk.OT_Name) ? "" : $" - {pk.OT_Name} - {TIDFormatted} - {ballFormatted}";
+            string OTInfo = string.IsNullOrEmpty(pk.OriginalTrainerName) ? "" : $" - {pk.OriginalTrainerName} - {TIDFormatted} - {ballFormatted}";
 
             var chk = pk is ISanityChecksum s ? s.Checksum : Checksums.Add16(pk.Data.AsSpan()[8..pk.SIZE_STORED]);
 
@@ -43,14 +43,14 @@ namespace PokeFilename.API
             var strings = Util.GetNaturesList("en");
             if ((uint) nature >= strings.Length)
                 nature = 0;
-            return strings[nature];
+            return strings[(uint) nature];
         }
 
         private static string GetShinyTypeString(PKM pk)
         {
             if (!pk.IsShiny)
                 return string.Empty;
-            if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == (int) GameVersion.GO))
+            if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == GameVersion.GO))
                 return " ■";
             return " ★";
         }
@@ -62,7 +62,7 @@ namespace PokeFilename.API
 
             string IVList = $"{gb.IV_HP}.{gb.IV_ATK}.{gb.IV_DEF}.{gb.IV_SPA}.{gb.IV_SPD}.{gb.IV_SPE}";
             string speciesName = SpeciesName.GetSpeciesNameGeneration(gb.Species, (int)LanguageID.English, gb.Format);
-            string OTInfo = string.IsNullOrEmpty(gb.OT_Name) ? "" : $" - {gb.OT_Name} - {gb.TID16:00000}";
+            string OTInfo = string.IsNullOrEmpty(gb.OriginalTrainerName) ? "" : $" - {gb.OriginalTrainerName} - {gb.TID16:00000}";
 
             var raw = gb switch
             {
