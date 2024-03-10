@@ -8,5 +8,6 @@ namespace PokeFilename.API
         Default = 0,
         AnubisNamer = 1,
         CustomNamer = 2,
+        GengarNamer = 3,
     }
 }
