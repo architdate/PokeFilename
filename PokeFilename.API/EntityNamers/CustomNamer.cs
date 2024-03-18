@@ -92,7 +92,14 @@ namespace PokeFilename.API
             return string.Empty;
         }
 
-        private static string GetConditionalTeraType(PKM pk) => (pk is ITeraType t) ? $"- Tera {t.GetTeraType()}" : string.Empty;
+        private static string GetConditionalTeraType(PKM pk)
+        {
+            if (pk is not ITeraType t)
+                return string.Empty;
+            var type = t.GetTeraType();
+            var type_str = ((byte) type == TeraTypeUtil.Stellar) ? "Stellar" : type.ToString();
+            return $"- Tera {type_str}";
+        }
 
         private static string GetAlpha(PKM pk) => (pk is IAlpha a && a.IsAlpha) ? "Alpha" : string.Empty;
         private static string GetConditionalAlpha(PKM pk) => (pk is IAlpha a && a.IsAlpha) ? "(Alpha)" : string.Empty;
