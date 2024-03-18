@@ -35,6 +35,15 @@ namespace PokeFilename.API
             "ConditionalGigantamax" => GetConditionalGigantamax(pk),
             "Legality"              => GetLegalityStatus(pk),
             "ItemName"              => GetItemName(pk),
+            "ConditionalScale"      => GetConditionalScale(pk),
+            "ConditionalTeraType"   => GetConditionalTeraType(pk),
+            "Alpha"                 => GetAlpha(pk),
+            "ConditionalAlpha"      => GetConditionalAlpha(pk),
+            "ConditionalGender"     => GetConditionalGender(pk),
+            "ConditionalNickname"   => GetConditionalNickname(pk),
+            "ConditionalStatNature" => GetConditionalStatNature(pk),
+            "PaddedSID"             => GetPaddedSID(pk),
+            "PaddedTID"             => GetPaddedTID(pk),
             _                       => $"{{{prop}}}"
         };
 
@@ -73,5 +82,28 @@ namespace PokeFilename.API
                 return items[pk.HeldItem];
             return "NoItem";
         }
+
+        private static string GetConditionalScale(PKM pk)
+        {
+            if (pk is IScaledSize3 s)
+                return $"- {s.Scale}";
+            if (pk is IScaledSize h)
+                return $"- {h.HeightScalar}";
+            return string.Empty;
+        }
+
+        private static string GetConditionalTeraType(PKM pk) => (pk is ITeraType t) ? $"- Tera {t.GetTeraType()}" : string.Empty;
+
+        private static string GetAlpha(PKM pk) => (pk is IAlpha a && a.IsAlpha) ? "Alpha" : string.Empty;
+        private static string GetConditionalAlpha(PKM pk) => (pk is IAlpha a && a.IsAlpha) ? "(Alpha)" : string.Empty;
+
+        private static string GetConditionalGender(PKM pk) => ((Gender) pk.Gender is Gender.Male or Gender.Female) ? GameInfo.GenderSymbolUnicode[pk.Gender] : string.Empty;
+
+        private static string GetConditionalNickname(PKM pk) => pk.IsNicknamed ? $"[{pk.Nickname}]" : string.Empty;
+
+        private static string GetConditionalStatNature(PKM pk) => (pk.Nature != pk.StatNature) ? $"➔{pk.StatNature}" : string.Empty;
+
+        private static string GetPaddedSID(PKM pk) => pk.TrainerIDDisplayFormat == TrainerIDFormat.SixDigit ? $"{pk.DisplaySID:0000}" : $"{pk.SID16:00000}";
+        private static string GetPaddedTID(PKM pk) => pk.TrainerIDDisplayFormat == TrainerIDFormat.SixDigit ? $"{pk.DisplayTID:000000}" : $"{pk.TID16:00000}";
     }
 }
