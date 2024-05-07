@@ -66,8 +66,8 @@ namespace PokeFilename.API
 
             var raw = gb switch
             {
-                PK1 pk1 => new PokeList1(pk1).Write(),
-                PK2 pk2 => new PokeList2(pk2).Write(),
+                PK1 pk1 => PokeList1.WrapSingle(pk1),
+                PK2 pk2 => PokeList2.WrapSingle(pk2),
                 _ => gb.Data
             };
             var checksum = Checksums.CRC16_CCITT(raw);
