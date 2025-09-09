@@ -10,7 +10,7 @@ This project is owned by [@architdate](https://github.com/architdate) (Discord: 
 This project has Azure CI/CD setup to auto build commits on every commit. People who are not keen on building the project themselves, may use the CI/CD to download the built plugin.
 
 ## Building  
-This project requires an IDE that supports compiling .NET based code (.NET 8.0). Recommended IDE is Visual Studio 2022.
+This project requires an IDE that supports compiling .NET based code (.NET 9.0). Recommended IDE is Visual Studio 2022.
 
 **Regular Builds**  
 Regular builds will usually succeed unless there are changes that are incompatible with the NuGet [PKHeX.Core](https://www.nuget.org/packages/PKHeX.Core) package dependency specified in the `.csproj` files of the projects.

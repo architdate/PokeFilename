@@ -32,7 +32,7 @@ namespace PokeFilename.API
 
             string OTInfo = string.IsNullOrEmpty(pk.OriginalTrainerName) ? "" : $" - {pk.OriginalTrainerName} - {TIDFormatted} - {ballFormatted}";
 
-            var chk = pk is ISanityChecksum s ? s.Checksum : Checksums.Add16(pk.Data.AsSpan()[8..pk.SIZE_STORED]);
+            var chk = pk is ISanityChecksum s ? s.Checksum : Checksums.Add16(pk.Data.Slice(8, pk.SIZE_STORED - 8));
 
             return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {chk:X4}{pk.EncryptionConstant:X8}";
         }
@@ -43,11 +43,11 @@ namespace PokeFilename.API
             var strings = Util.GetNaturesList("en");
             if ((uint) nature >= strings.Length)
                 nature = 0;
-            return strings[(int) nature];
+            return strings[(int)nature];
         }
 
         private static string GetShinyTypeString(PKM pk)
-        {
+        { 
             if (!pk.IsShiny)
                 return string.Empty;
             if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == GameVersion.GO))
