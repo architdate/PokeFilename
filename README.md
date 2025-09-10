@@ -18,7 +18,7 @@ Regular builds will usually succeed unless there are changes that are incompatib
 - Clone the PokeFilename repository using: `$ git clone https://github.com/architdate/PokeFilename.git`.
 - Right-click on the solution and click `Rebuild All`.
 - These DLLs should be placed into a `plugins` directory where the PKHeX executable is. You may also combine these DLL files using ILMerge.
-   - The compiled DLLs for PokeFilename will be in the `PokeFilename.GUI/bin/Release/net8.0-windows` directory:
+   - The compiled DLLs for PokeFilename will be in the `PokeFilename.GUI/bin/Release/net9.0-windows` directory:
      * PokeFilename.GUI.dll
      * PokeFilename.API.dll
 
