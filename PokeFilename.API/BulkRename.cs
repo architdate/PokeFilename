@@ -19,7 +19,7 @@ namespace PokeFilename.API
 
         public static void RenameAll(IReadOnlyList<string> files) => RenameAll(files, EntityFileNamer.Namer);
         public static void RenameAll(IEnumerable<string> files) => RenameAll(files, EntityFileNamer.Namer);
-        public static void RenameAll(IEnumerable<string> files, IFileNamer<PKM> namer) => RenameAll(files.ToArray(), namer);
+        public static void RenameAll(IEnumerable<string> files, IFileNamer<PKM> namer) => RenameAll([.. files], namer);
 
         public static void RenameFolder(string path, bool deep = false) => RenameFolder(path, EntityFileNamer.Namer, deep);
 

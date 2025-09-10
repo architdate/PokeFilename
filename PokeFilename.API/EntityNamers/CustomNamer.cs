@@ -3,23 +3,19 @@ using System.Text.RegularExpressions;
 
 namespace PokeFilename.API
 {
-    public sealed class CustomNamer : IFileNamer<PKM>
+    public sealed partial class CustomNamer(string regular, string gameboy) : IFileNamer<PKM>
     {
         public string Name => "Default";
 
-        private readonly string Regular;
-        private readonly string Gameboy;
         public static readonly GameStrings Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
 
-        public CustomNamer(string regular, string gameboy)
-        {
-            Regular = regular;
-            Gameboy = gameboy;
-        }
-
-        public string GetName(PKM obj) => Regex.Replace(RemapKeywords(obj, obj is GBPKM ? Gameboy : Regular), @"\s+", " ");
-        private static string RemapKeywords(PKM pk, string input) => Regex.Replace(input, "{(?<exp>[^}]+)}", match => GetStringValue(pk, match.Groups["exp"].Value));
+        public string GetName(PKM obj) => NameRegex().Replace(RemapKeywords(obj, obj is GBPKM ? gameboy : regular), " ");
+        private static string RemapKeywords(PKM pk, string input) => RemapRegex().Replace(input, match => GetStringValue(pk, match.Groups["exp"].Value));
         private static string GetStringValue(PKM pk, string property) => pk.GetPropertyValue(property) ?? pk.GetValue(property);
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex NameRegex();
+        [GeneratedRegex("{(?<exp>[^}]+)}")]
+        private static partial Regex RemapRegex();
     }
 
     public static class KeywordRemappingExtensions
@@ -41,12 +37,12 @@ namespace PokeFilename.API
         // Extensions
         private static string GetLegalityStatus(PKM pk) => new LegalityAnalysis(pk).Valid ? "Legal" : "Illegal";
         private static string GetConditionalForm(PKM pk) => pk.Form > 0 ? $"-{pk.Form:00}" : string.Empty;
-        private static string GetGigantamax(PKM pk) => (pk is IGigantamax g && g.CanGigantamax) ? "Gigantamax" : string.Empty;
-        private static string GetConditionalGigantamax(PKM pk) => (pk is IGigantamax g && g.CanGigantamax) ? "(Gigantamax)" : string.Empty;
+        private static string GetGigantamax(PKM pk) => pk is IGigantamax { CanGigantamax: true } ? "Gigantamax" : string.Empty;
+        private static string GetConditionalGigantamax(PKM pk) => pk is IGigantamax { CanGigantamax: true } ? "(Gigantamax)" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
 
-        private static string GetShinyTypeString(PKM pk)
-        { //Copied from AnubisNamer
+        private static string GetShinyTypeString(PKM pk) // Copied from AnubisNamer
+        {
             if (!pk.IsShiny)
                 return string.Empty;
             if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == GameVersion.GO))
@@ -70,9 +66,7 @@ namespace PokeFilename.API
             if (pk.HeldItem <= 0)
                 return "NoItem";
             var items = CustomNamer.Strings.GetItemStrings(pk.Context);
-            if (pk.HeldItem < items.Length)
-                return items[pk.HeldItem];
-            return "NoItem";
+            return pk.HeldItem < items.Length ? items[pk.HeldItem] : "NoItem";
         }
     }
 }

@@ -21,7 +21,7 @@ namespace PokeFilename.API
 
             string IVList = $"{pk.IV_HP}.{pk.IV_ATK}.{pk.IV_DEF}.{pk.IV_SPA}.{pk.IV_SPD}.{pk.IV_SPE}";
 
-            var useTID7 = pk.Generation >= 7 || (pk.Format == 9 && pk.IsEgg);
+            var useTID7 = pk.Generation >= 7 || pk is { Format: 9, IsEgg: true };
             string TIDFormatted = useTID7 ? $"{pk.DisplayTID:000000}" : $"{pk.TID16:00000}";
             var balllist = GameInfo.Strings.balllist;
             string ballFormatted = pk.Ball < balllist.Length ? balllist[pk.Ball].Split(' ')[0] : "???";
@@ -32,12 +32,12 @@ namespace PokeFilename.API
 
             string OTInfo = string.IsNullOrEmpty(pk.OriginalTrainerName) ? "" : $" - {pk.OriginalTrainerName} - {TIDFormatted} - {ballFormatted}";
 
-            var chk = pk is ISanityChecksum s ? s.Checksum : Checksums.Add16(pk.Data.Slice(8, pk.SIZE_STORED - 8));
+            var chk = pk is ISanityChecksum s ? s.Checksum : Checksums.Add16(pk.Data[8..pk.SIZE_STORED]);
 
-            return $"{pk.Species:000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {chk:X4}{pk.EncryptionConstant:X8}";
+            return $"{pk.Species:0000}{form}{shinytype} - {speciesName} - {GetNature(pk)} - {IVList}{OTInfo} - {chk:X4}{pk.EncryptionConstant:X8}";
         }
 
-        private static string GetNature(INature pk)
+        private static string GetNature(PKM pk)
         {
             var nature = pk.Nature;
             var strings = Util.GetNaturesList("en");

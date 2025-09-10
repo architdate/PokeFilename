@@ -29,11 +29,11 @@ namespace PokeFilename
             }
         }
 
+        private static readonly JsonSerializerOptions options = new() { WriteIndented = true };
         private static void SetSettings<T>(T cfg, string path)
         {
             try
             {
-                JsonSerializerOptions options = new() { WriteIndented = true };
                 string output = JsonSerializer.Serialize(cfg, options);
                 File.WriteAllText(path, output);
             }
