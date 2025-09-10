@@ -45,7 +45,8 @@ namespace PokeFilename.API
         private static string GetConditionalGigantamax(PKM pk) => (pk is IGigantamax g && g.CanGigantamax) ? "(Gigantamax)" : string.Empty;
         private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
 
-        private static string GetShinyTypeString(PKM pk) { //Copied from AnubisNamer
+        private static string GetShinyTypeString(PKM pk)
+        { //Copied from AnubisNamer
             if (!pk.IsShiny)
                 return string.Empty;
             if (pk.Format >= 8 && (pk.ShinyXor == 0 || pk.FatefulEncounter || pk.Version == GameVersion.GO))
