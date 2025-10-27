@@ -29,6 +29,8 @@ namespace PokeFilename.API
             string speciesName = SpeciesName.GetSpeciesNameGeneration(pk.Species, (int)LanguageID.English, pk.Format);
             if (pk is IGigantamax { CanGigantamax: true })
                 speciesName += "-Gmax";
+            if (pk is IAlpha { IsAlpha: true })
+                speciesName = "α-" + speciesName; 
 
             string OTInfo = string.IsNullOrEmpty(pk.OriginalTrainerName) ? "" : $" - {pk.OriginalTrainerName} - {TIDFormatted} - {ballFormatted}";
 
