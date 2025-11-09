@@ -76,7 +76,7 @@ namespace PokeFilename.API
 
         private static string GetLanguageTag(PKM pk)
         {
-            string[] tags = ["JPN", "ENG", "FRA", "ITA", "DEU", "ES-ES", "KOR", "CHS", "CHT", "ES-LA"];
+            string[] tags = ["NONE", "JPN", "ENG", "FRA", "ITA", "DEU", "UNUSED", "ES-ES", "KOR", "CHS", "CHT", "ES-LA"];
             return tags[pk.Language];
         }
     }
