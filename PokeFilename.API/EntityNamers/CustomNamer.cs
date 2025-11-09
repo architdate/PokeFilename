@@ -33,6 +33,7 @@ namespace PokeFilename.API
             "ConditionalAlpha"      => GetConditionalAlpha(pk),
             "Legality"              => GetLegalityStatus(pk),
             "ItemName"              => GetItemName(pk),
+            "LanguageTag"           => GetLanguageTag(pk),
             _                       => $"{{{prop}}}"
         };
 
@@ -71,6 +72,12 @@ namespace PokeFilename.API
                 return "NoItem";
             var items = CustomNamer.Strings.GetItemStrings(pk.Context);
             return pk.HeldItem < items.Length ? items[pk.HeldItem] : "NoItem";
+        }
+
+        private static string GetLanguageTag(PKM pk)
+        {
+            string[] tags = ["JPN", "ENG", "FRA", "ITA", "DEU", "ES-ES", "KOR", "CHS", "CHT", "ES-LA"];
+            return tags[pk.Language];
         }
     }
 }
