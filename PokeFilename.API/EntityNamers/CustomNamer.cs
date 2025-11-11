@@ -74,10 +74,19 @@ namespace PokeFilename.API
             return pk.HeldItem < items.Length ? items[pk.HeldItem] : "NoItem";
         }
 
-        private static string GetLanguageTag(PKM pk)
+        private static string GetLanguageTag(PKM pk) => (LanguageID)pk.Language switch
         {
-            string[] tags = ["JPN", "ENG", "FRA", "ITA", "DEU", "ES-ES", "KOR", "CHS", "CHT", "ES-LA"];
-            return tags[pk.Language];
-        }
+            LanguageID.Japanese => "JPN",
+            LanguageID.English  => "ENG",
+            LanguageID.French   => "FRA",
+            LanguageID.Italian  => "ITA",
+            LanguageID.German   => "DEU",
+            LanguageID.Spanish  => "ES-ES",
+            LanguageID.Korean   => "KOR",
+            LanguageID.ChineseS => "CHS",
+            LanguageID.ChineseT => "CHT",
+            LanguageID.SpanishL => "ES-LA",
+            _                   => string.Empty,
+        };
     }
 }
