@@ -42,9 +42,8 @@ namespace PokeFilename
 
         private void AddPluginControl(ToolStripDropDownItem tools)
         {
-            var lightTheme = Application.ColorMode == SystemColorMode.Classic;
             var ctrl = new ToolStripMenuItem(Name) { 
-                Image = lightTheme ? GUI.Resources.pokeball : GUI.Resources.pokeball_inverted
+                Image = Application.IsDarkModeEnabled ? GUI.Resources.pokeball : GUI.Resources.pokeball_inverted
             };
             ctrl.Click += OpenSettings;
             ctrl.Name = "Menu_PokeFilenameSettings";
