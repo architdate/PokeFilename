@@ -10,7 +10,7 @@ This project is owned by [@architdate](https://github.com/architdate) (Discord: 
 This project has Azure CI/CD setup to auto build commits on every commit. People who are not keen on building the project themselves, may use the CI/CD to download the built plugin.
 
 ## Building  
-This project requires an IDE that supports compiling .NET based code (.NET 9.0). Recommended IDE is Visual Studio 2022.
+This project requires an IDE that supports compiling .NET based code (.NET 10.0). Recommended IDE is Visual Studio 2026.
 
 **Regular Builds**  
 Regular builds will usually succeed unless there are changes that are incompatible with the NuGet [PKHeX.Core](https://www.nuget.org/packages/PKHeX.Core) package dependency specified in the `.csproj` files of the projects.
@@ -18,7 +18,7 @@ Regular builds will usually succeed unless there are changes that are incompatib
 - Clone the PokeFilename repository using: `$ git clone https://github.com/architdate/PokeFilename.git`.
 - Right-click on the solution and click `Rebuild All`.
 - These DLLs should be placed into a `plugins` directory where the PKHeX executable is. You may also combine these DLL files using ILMerge.
-   - The compiled DLLs for PokeFilename will be in the `PokeFilename.GUI/bin/Release/net9.0-windows` directory:
+   - The compiled DLLs for PokeFilename will be in the `PokeFilename.GUI/bin/Release/net10.0-windows` directory:
      * PokeFilename.GUI.dll
      * PokeFilename.API.dll
 
