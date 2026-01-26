@@ -44,7 +44,7 @@ namespace PokeFilename.API
         private static string GetConditionalGigantamax(PKM pk) => pk is IGigantamax { CanGigantamax: true } ? "(Gigantamax)" : string.Empty;
         private static string GetAlpha(PKM pk) => pk is IAlpha { IsAlpha: true } ? "α" : string.Empty;
         private static string GetConditionalAlpha(PKM pk) => pk is IAlpha { IsAlpha: true } ? "(α)" : string.Empty;
-        private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? Util.GetCharacteristicsList("en")[pk.Characteristic] : string.Empty;
+        private static string GetCharacteristicText(PKM pk) => pk.Characteristic >= 0 ? CustomNamer.Strings.characteristics[pk.Characteristic] : string.Empty;
 
         private static string GetShinyTypeString(PKM pk) // Copied from AnubisNamer
         {

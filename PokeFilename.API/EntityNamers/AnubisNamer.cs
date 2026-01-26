@@ -1,11 +1,12 @@
 ﻿using PKHeX.Core;
-using System;
 
 namespace PokeFilename.API
 {
     public sealed class AnubisNamer : IFileNamer<PKM>
     {
         public string Name => "Default";
+
+        private static readonly GameStrings Strings = GameInfo.GetStrings(GameLanguage.DefaultLanguage);
 
         public string GetName(PKM obj)
         {
@@ -42,10 +43,10 @@ namespace PokeFilename.API
         private static string GetNature(PKM pk)
         {
             var nature = pk.Nature;
-            var strings = Util.GetNaturesList("en");
-            if ((uint) nature >= strings.Length)
+            var natures = Strings.Natures;
+            if ((uint) nature >= natures.Count)
                 nature = 0;
-            return strings[(int)nature];
+            return natures[(int)nature];
         }
 
         private static string GetShinyTypeString(PKM pk)
