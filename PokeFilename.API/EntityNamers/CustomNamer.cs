@@ -1,4 +1,5 @@
 ﻿using PKHeX.Core;
+using System;
 using System.Text.RegularExpressions;
 
 namespace PokeFilename.API
@@ -22,19 +23,21 @@ namespace PokeFilename.API
     {
         public static string GetValue(this PKM pk, string prop) => prop switch
         {
-            "ShinyType"             => GetShinyTypeString(pk),
-            "CharacteristicText"    => GetCharacteristicText(pk),
-            "ConditionalForm"       => GetConditionalForm(pk),
-            "FormName"              => GetFormName(pk),
-            "ConditionalFormName"   => GetConditionalFormName(pk),
-            "Gigantamax"            => GetGigantamax(pk),
-            "ConditionalGigantamax" => GetConditionalGigantamax(pk),
-            "Alpha"                 => GetAlpha(pk),
-            "ConditionalAlpha"      => GetConditionalAlpha(pk),
-            "Legality"              => GetLegalityStatus(pk),
-            "ItemName"              => GetItemName(pk),
-            "LanguageTag"           => GetLanguageTag(pk),
-            _                       => $"{{{prop}}}"
+            "ShinyType"                => GetShinyTypeString(pk),
+            "CharacteristicText"       => GetCharacteristicText(pk),
+            "ConditionalForm"          => GetConditionalForm(pk),
+            "FormName"                 => GetFormName(pk),
+            "ConditionalFormName"      => GetConditionalFormName(pk),
+            "AlcremieSweet"            => GetAlcremieSweet(pk),
+            "ConditionalAlcremieSweet" => GetConditionalAlcremieSweet(pk),
+            "Gigantamax"               => GetGigantamax(pk),
+            "ConditionalGigantamax"    => GetConditionalGigantamax(pk),
+            "Alpha"                    => GetAlpha(pk),
+            "ConditionalAlpha"         => GetConditionalAlpha(pk),
+            "Legality"                 => GetLegalityStatus(pk),
+            "ItemName"                 => GetItemName(pk),
+            "LanguageTag"              => GetLanguageTag(pk),
+            _                          => $"{{{prop}}}"
         };
 
         // Extensions
@@ -64,6 +67,18 @@ namespace PokeFilename.API
         private static string GetConditionalFormName(PKM pk) {
             string formName = GetFormName(pk);
             return string.IsNullOrEmpty(formName) ? string.Empty : $"({formName})";
+        }
+
+        private static string GetAlcremieSweet(PKM pk)
+        {
+            if ((Species)pk.Species is not Species.Alcremie || pk is not IFormArgument fa) return string.Empty;
+            return $"{Enum.GetNames<AlcremieDecoration>()[fa.FormArgument]}-Sweet";
+        }
+
+        private static string GetConditionalAlcremieSweet(PKM pk)
+        {
+            string sweetName = GetAlcremieSweet(pk);
+            return string.IsNullOrEmpty(sweetName) ? string.Empty : $"({sweetName})";
         }
 
         private static string GetItemName(PKM pk)
