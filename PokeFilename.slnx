@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PokeFilename.API/PokeFilename.API.csproj" />
+  <Project Path="PokeFilename.GUI/PokeFilename.GUI.csproj" />
+</Solution>
