@@ -1,0 +1,68 @@
+name: Build PokeFilename
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  SOLUTION: PokeFilename.slnx
+  BUILD_PLATFORM: Any CPU
+  BUILD_CONFIGURATION: Release
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout PokeFilename
+      uses: actions/checkout@v7
+
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore NuGet packages for PokeFilename
+      run: dotnet restore ${{ env.SOLUTION }}
+
+    - name: Clone PKHeX repository
+      shell: cmd
+      run: git clone -q --depth=5 --branch=master https://github.com/kwsch/PKHeX.git PKHeX
+
+    - name: Restore NuGet packages for PKHeX
+      run: dotnet restore PKHeX/PKHeX.sln
+
+    - name: Build PKHeX.Core
+      run: dotnet build PKHeX/PKHeX.Core/PKHeX.Core.csproj -c ${{ env.BUILD_CONFIGURATION }} -p:Platform="${{ env.BUILD_PLATFORM }}"
+
+    - name: Copy PKHeX.Core to NuGet cache
+      shell: cmd
+      run: |
+        setlocal enabledelayedexpansion
+        set "pkgDir=%USERPROFILE%\.nuget\packages\pkhex.core"
+        if exist "!pkgDir!" (
+          for /f "delims=" %%D in ('dir /b /od "!pkgDir!" ^| findstr /r "." ^| sort /r') do (
+            set "nugetver=%%D"
+            goto :found
+          )
+          :found
+          if not exist "!pkgDir!\!nugetver!\lib\net10.0" mkdir "!pkgDir!\!nugetver!\lib\net10.0"
+          copy "PKHeX\PKHeX.Core\bin\Any CPU\Release\net10.0\PKHeX.Core.dll" "!pkgDir!\!nugetver!\lib\net10.0\"
+        )
+
+    - name: Build PokeFilename
+      run: dotnet build ${{ env.SOLUTION }} -c ${{ env.BUILD_CONFIGURATION }} -p:Platform="${{ env.BUILD_PLATFORM }}"
+
+    - name: Prepare artifacts
+      shell: cmd
+      run: |
+        if not exist bin mkdir bin
+        copy "PokeFilename.GUI\bin\Release\net10.0-windows\PokeFilename.GUI.dll" "bin\PokeFilename.dll"
+
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: PokeFilename
+        path: bin/
